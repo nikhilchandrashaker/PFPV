@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Punt Field-Position Value — PFPV</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#f2efe4;--surf:#e8e4d4;--ink:#10281c;--mut:#5c6b5f;--line:#c9c5b0;--turf:#14402b;--chalk:#f7f5ec;--hi:#d9480f;--good:#0b7a5a;--bad:#b4351f;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c1d15;--surf:#13291d;--ink:#eee9d6;--mut:#9db0a2;--line:#27443a;--turf:#0a2417;--chalk:#eee9d6;--hi:#ff7a3d;--good:#4fd1a1;--bad:#ff8a73;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c1d15;--surf:#13291d;--ink:#eee9d6;--mut:#9db0a2;--line:#27443a;--turf:#0a2417;--chalk:#eee9d6;--hi:#ff7a3d;--good:#4fd1a1;--bad:#ff8a73;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Mono",ui-monospace,Menlo,monospace}
+.wrap{max-width:1040px;margin:0 auto;padding:20px 18px 60px}
+h1,h2,.num{font-family:"Barlow Condensed","Arial Narrow",Impact,sans-serif;letter-spacing:.01em;text-transform:uppercase;margin:0}
+h1{font-size:clamp(44px,9vw,84px);line-height:.9;font-weight:800}h2{font-size:30px;font-weight:700;margin-top:56px}
+.k{color:var(--hi)}.mut{color:var(--mut)}p{max-width:62ch}
+.field{background:var(--turf);border-radius:6px;padding:18px 16px 14px;margin-top:22px;color:#eee9d6;position:relative}
+.field svg{width:100%;height:auto;display:block}
+.readout{display:flex;gap:22px;flex-wrap:wrap;margin-top:10px;align-items:baseline}
+.big{font:800 54px/1 "Barlow Condensed",sans-serif}.lab{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#9db0a2}
+input[type=range]{width:100%;accent-color:var(--hi);margin:14px 0 2px}
+.seg{display:flex;gap:0;margin:18px 0 10px;flex-wrap:wrap}.seg button{font:inherit;font-size:13px;background:none;color:var(--ink);border:1px solid var(--ink);padding:7px 14px;cursor:pointer;margin-right:-1px}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+input.q{font:inherit;font-size:13px;background:var(--surf);border:1px solid var(--line);color:var(--ink);padding:7px 10px;margin-left:12px;border-radius:3px;width:170px}
+.tw{overflow-x:auto;border-top:2px solid var(--ink)}table{border-collapse:collapse;width:100%;min-width:760px;font-size:13px}
+th{font:600 11px "IBM Plex Mono",monospace;text-transform:uppercase;letter-spacing:.06em;text-align:right;padding:8px 8px;color:var(--mut);cursor:pointer;white-space:nowrap;border-bottom:1px solid var(--line);user-select:none}
+th.l,td.l{text-align:left}th.on{color:var(--hi)}td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+td.l b{font-weight:500}.tm{color:var(--mut);font-size:11px;margin-left:6px}
+.bar{display:inline-block;height:9px;vertical-align:middle;margin-left:8px;background:var(--good)}.bar.n{background:var(--bad)}
+.up{color:var(--good)}.dn{color:var(--bad)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:26px;margin-top:18px}
+.card{background:var(--surf);padding:16px;border-radius:4px}.card h3{font:700 20px "Barlow Condensed",sans-serif;text-transform:uppercase;margin:0 0 4px}
+.row{display:flex;align-items:center;gap:8px;font-size:12px;margin:5px 0}.row span:first-child{width:112px;flex:none}.row i{display:block;height:12px;background:var(--mut)}.row i.h{background:var(--hi)}
+.note{border-left:4px solid var(--hi);padding:4px 0 4px 14px;margin:26px 0;max-width:68ch}
+svg text{font-family:"IBM Plex Mono",monospace}
+</style></head><body><div class="wrap">
+<div class="mut" style="font-size:12px;letter-spacing:.1em;text-transform:uppercase">NFL punting · <span id="rng"></span> · <span id="np"></span> punts</div>
+<h1>Not all <span class="k">inside-the-20s</span><br>are equal.</h1>
+<p>The box score gives a punt downed at the 19 the same credit as one downed at the 1. Drag the ball. Expected points come from <span id="epn"></span> real first-and-tens.</p>
+<div class="field"><svg viewBox="0 0 800 150" id="fs"></svg>
+<input type="range" id="sl" min="1" max="40" value="19" aria-label="Punt downed at yard line">
+<div class="readout"><div><div class="lab">Downed at the</div><div class="big" id="r1">19</div></div><div><div class="lab">Opp. expected points</div><div class="big" id="r2"></div></div><div><div class="lab">vs. downed at the 1</div><div class="big" id="r3"></div></div></div></div>
+
+<h2>Leaderboard</h2>
+<p class="mut" style="margin-top:6px"><b class="k">KV</b> (Kick Value) = expected points saved per 100 punts at the spot the ball lands or is downed, vs. an average punt from that field position and era. <b>Δ</b> = places gained vs. net-average rank. Small samples are shrunk toward zero.</p>
+<div class="seg" id="seg"><button data-s="recent" aria-pressed="true">2024–26</button><button data-s="career" aria-pressed="false">Career (300+)</button><button data-s="seasons" aria-pressed="false">Best seasons</button><input class="q" id="q" placeholder="Search punter" aria-label="Search punter"></div>
+<div class="tw"><table><thead id="th"></thead><tbody id="tb"></tbody></table></div>
+
+<h2>Kick vs. coverage</h2>
+<p class="mut" style="margin-top:6px">Right = better leg. Up = the coverage unit and returner helped after the ball landed. 2024–26.</p>
+<div class="card"><svg viewBox="0 0 800 380" id="sc" style="width:100%;height:auto"></svg></div>
+
+<h2>Does it hold up?</h2>
+<div class="grid"><div class="card"><h3>Year-to-year repeatability</h3><div class="mut" style="font-size:11px">Same punter, consecutive seasons (r)</div><div id="rel"></div></div>
+<div class="card"><h3>Simulation: 70-punt season</h3><div class="mut" style="font-size:11px">Correlation with neutral true talent, 3,000 sims</div><div id="sim"></div></div></div>
+<div class="note"><b>Honest read.</b> Net average is more repeatable year to year, but part of that is position bias: it correlates <span id="b1"></span> with where a punter starts, while PFPV is <span id="b2"></span>. Kick Value is the best-performing punter-level number in the simulation and strips return luck. No hang time exists in public play-by-play, so punter and coverage can only be separated by outcome, not by physics.</div>
+</div>
+<script>
+const D=/*DATA*/null;const $=s=>document.querySelector(s),f=(x,n=1)=>(x>0?"+":x<0?"−":"")+Math.abs(x).toFixed(n);
+$("#rng").textContent=D.seasonsRange.join("–");$("#np").textContent=D.n.toLocaleString();$("#epn").textContent="380,000";
+$("#b1").textContent="+"+D.bias.net.toFixed(2);$("#b2").textContent=D.bias.pfpv.toFixed(2);
+// D.ep is sorted by yardline_100 descending, so index i = receiving team own yard line i+1
+const epAt=y=>D.ep[y-1];
+function field(){const y=+$("#sl").value,e=epAt(y),e1=epAt(1);$("#r1").textContent=y;$("#r2").textContent=f(e,2);$("#r3").textContent=f(e-e1,2)+" pts";
+let s='<rect x="0" y="40" width="800" height="70" fill="none"/>';for(let i=0;i<=40;i+=5){const x=20+i*18.5;s+=`<line x1="${x}" y1="38" x2="${x}" y2="112" stroke="#eee9d6" stroke-opacity="${i%10?0.25:0.6}" stroke-width="${i%10?1:2}"/><text x="${x}" y="132" fill="#9db0a2" font-size="11" text-anchor="middle">${i}</text>`}
+for(let i=1;i<=40;i++){const x=20+i*18.5;s+=`<line x1="${x}" y1="${i%5?70:60}" x2="${x}" y2="${i%5?78:50}" stroke="#eee9d6" stroke-opacity=".35"/>`}
+s+=`<rect x="0" y="38" width="20" height="74" fill="#d9480f" fill-opacity=".85"/><text x="10" y="80" fill="#fff" font-size="10" text-anchor="middle" transform="rotate(-90 10 76)">END ZONE</text>`;
+s+=`<rect x="${20+19*18.5}" y="36" width="3" height="78" fill="#ff7a3d" opacity=".6"/><text x="${20+19*18.5+6}" y="28" fill="#ff7a3d" font-size="10">the “inside 20” line</text>`;
+const bx=20+y*18.5;s+=`<ellipse cx="${bx}" cy="75" rx="13" ry="8" fill="#8a4b1f" stroke="#eee9d6" stroke-width="1.5"/><line x1="${bx-5}" y1="75" x2="${bx+5}" y2="75" stroke="#eee9d6"/>`;$("#fs").innerHTML=s}
+$("#sl").oninput=field;field();
+let set="recent",key="kv100",dir=-1;
+const cols={recent:[["Punter","name"],["Punts","punts"],["Net avg","net"],["Net rk","rank_net"],["KV /100","kv100"],["PFPV /100","pfpv100"],["Cov /100","cov100"],["Unret %","unret"],["Δ","delta"]],
+career:[["Punter","name"],["Punts","punts"],["Net avg","net"],["Net rk","rank_net"],["KV /100","kv100"],["PFPV /100","pfpv100"],["Cov /100","cov100"],["Unret %","unret"],["Δ","delta"]],
+seasons:[["Punter","name"],["Season","season"],["Punts","punts"],["Net avg","net"],["KV /100","kv100"],["PFPV /100","pfpv100"],["Cov /100","cov100"],["Unret %","unret"]]};
+function render(){const rows=D[set].map(r=>({...r,delta:r.rank_net!=null?r.rank_net-r.rank_kv:null})),c=cols[set],qq=$("#q").value.toLowerCase();
+let L=rows.filter(r=>r.name.toLowerCase().includes(qq)).sort((a,b)=>((a[key]??-1e9)>(b[key]??-1e9)?1:-1)*dir);
+$("#th").innerHTML="<tr><th class='l'>#</th>"+c.map(([t,k])=>`<th class="${k=="name"?"l":""} ${k==key?"on":""}" data-k="${k}">${t}</th>`).join("")+"</tr>";
+const mx=Math.max(...rows.map(r=>Math.abs(r.kv100)));
+$("#tb").innerHTML=L.map((r,i)=>"<tr><td class='l mut'>"+(i+1)+"</td>"+c.map(([t,k])=>{let v=r[k];if(k=="name")return `<td class='l'><b>${v}</b><span class='tm'>${r.team||""}${set=="career"?" · "+r.first+"–"+r.last:""}</span></td>`;
+if(k=="kv100")return `<td><b>${f(v)}</b><span class="bar ${v<0?"n":""}" style="width:${Math.abs(v)/mx*60}px"></span></td>`;
+if(k=="pfpv100"||k=="cov100")return `<td>${f(v)}</td>`;if(k=="net"||k=="gross")return `<td>${v.toFixed(1)}</td>`;if(k=="unret")return `<td>${(v*100).toFixed(0)}%</td>`;
+if(k=="delta")return v==null?"<td>–</td>":`<td class="${v>0?"up":v<0?"dn":""}">${v>0?"▲":v<0?"▼":""}${Math.abs(v)||"–"}</td>`;if(k=="rank_net")return `<td class="mut">${v}</td>`;return `<td>${v}</td>`}).join("")+"</tr>").join("")}
+$("#th").onclick=e=>{const k=e.target.dataset.k;if(!k)return;if(k==key)dir*=-1;else{key=k;dir=k=="name"?1:-1}render()};
+$("#seg").onclick=e=>{const s=e.target.dataset.s;if(!s)return;set=s;key="kv100";dir=-1;document.querySelectorAll("#seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.s==s));render()};
+$("#q").oninput=render;render();
+// scatter
+(function(){const R=D.recent,W=800,H=380,m=50,xs=R.map(r=>r.kv100),ys=R.map(r=>r.cov100),x0=Math.min(...xs)-1,x1=Math.max(...xs)+1,y0=Math.min(...ys)-1,y1=Math.max(...ys)+1;
+const X=v=>m+(v-x0)/(x1-x0)*(W-m-20),Y=v=>H-m-(v-y0)/(y1-y0)*(H-m-20);let s=`<line x1="${X(0)}" y1="14" x2="${X(0)}" y2="${H-m}" stroke="var(--mut)" stroke-dasharray="3 3"/><line x1="${m}" y1="${Y(0)}" x2="${W-14}" y2="${Y(0)}" stroke="var(--mut)" stroke-dasharray="3 3"/>`;
+const top=new Set([...R].sort((a,b)=>b.kv100-a.kv100).slice(0,5).concat([...R].sort((a,b)=>a.kv100-b.kv100).slice(0,3),[...R].sort((a,b)=>b.cov100-a.cov100).slice(0,2),[...R].sort((a,b)=>a.cov100-b.cov100).slice(0,2)).map(r=>r.name));
+R.forEach(r=>{s+=`<circle cx="${X(r.kv100)}" cy="${Y(r.cov100)}" r="${Math.sqrt(r.punts)/1.6}" fill="var(--good)" fill-opacity=".45" stroke="var(--bg)"/>`;if(top.has(r.name))s+=`<text x="${X(r.kv100)+9}" y="${Y(r.cov100)-7}" font-size="10" fill="var(--ink)">${r.name}</text>`});
+s+=`<text x="${W/2}" y="${H-10}" font-size="11" fill="var(--mut)" text-anchor="middle">Kick Value → better leg (EP pts / 100 punts)</text><text x="14" y="${H/2}" font-size="11" fill="var(--mut)" text-anchor="middle" transform="rotate(-90 14 ${H/2})">Coverage value ↑</text>`;$("#sc").innerHTML=s})();
+const nm={net:"Net avg",gross:"Gross avg",kick:"Kick Value",cov:"Coverage",unret:"Unreturnable %",pfpv:"PFPV total",in20:"In-20 rate",in10:"In-10 rate"};
+$("#rel").innerHTML=Object.keys(nm).sort((a,b)=>D.rel[b]-D.rel[a]).map(k=>`<div class="row"><span>${nm[k]}</span><i class="${k=="kick"?"h":""}" style="width:${D.rel[k]*170}px"></i><b>${D.rel[k].toFixed(2)}</b></div>`).join("");
+const sn={kick_val:"Kick Value",gross:"Gross avg",pfpv:"PFPV total",net_yards:"Net avg",unreturnable:"Unreturnable %",in20:"In-20 rate"};
+$("#sim").innerHTML=Object.keys(sn).sort((a,b)=>D.sim[b].mean_corr-D.sim[a].mean_corr).map(k=>`<div class="row"><span>${sn[k]}</span><i class="${k=="kick_val"?"h":""}" style="width:${D.sim[k].mean_corr*170}px"></i><b>${D.sim[k].mean_corr.toFixed(2)}</b></div>`).join("")+`<div class="mut" style="font-size:11px;margin-top:8px">Names the true #1 punter: KV ${(D.sim.kick_val.top1*100).toFixed(0)}% · Net ${(D.sim.net_yards.top1*100).toFixed(0)}% · In-20 ${(D.sim.in20.top1*100).toFixed(0)}%</div>`;
+</script></body></html>
